@@ -2,12 +2,28 @@
 <html>
     <head>
         <title>CO-OL Canvas - Collaborative Online Drawing App</title>
+        <style>
+            canvas {margin: 120px;}
+
+        </style>
         <script src="/socket.io/socket.io.js"></script>
+        <script>
+            var socket = io();
+            $('form').submit(function(){
+                socket.emit('draw');
+                return false;
+            });
+        </script>
+
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
         <script type="text/javascript" src="canvas.js"></script>
+        <script type="text/javascript"> $(document).ready(
+                function() {
+                    init();
+                }
+        );</script>
     </head>
     <body>
-
     <canvas id="canvasID" width="1200" height="800"></canvas>
     <script type="text/javascript"> $(document).ready(
             function() {

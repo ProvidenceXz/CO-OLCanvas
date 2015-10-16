@@ -8,7 +8,7 @@ var io = require('socket.io')(http);
 
 // route handler
 app.get('/', function (req, res) {
-    res.sendfile( 'main.html');
+    res.sendfile( '/index.html' , {root:__dirname});
 });
 
 

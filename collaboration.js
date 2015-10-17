@@ -2,20 +2,41 @@
 /*------------------------*/
 
 // initialization
-var app = require('express')();
-var http = require('http').Server(app);
+var express = require('express');
+var app = express();
+app.use('/', express.static(__dirname + '/'));
+var http = require('http').createServer(app);
 var io = require('socket.io')(http);
 
 // route handler
 app.get('/', function (req, res) {
-    res.sendfile( '/index.html' , {root:__dirname});
+    res.sendfile('index.html');
 });
 
 
+var active_connection = 0;
 io.on('connection', function(socket){
-    console.log('a user connected');
-    socket.on('disconnect', function(){
-        console.log('user disconnected');
+    // user connection
+    console.log('a user connected. Active users: ' + active_connection.toString());
+    active_connection++;
+
+    // hello world
+    io.emit('this', { will: 'be received by everyone' });
+
+    // user disconnection
+    socket.on('disconnect', function () {
+        active_connection--;
+        console.log('user disconnected. Active users: ' + active_connection.toString());
+    });
+
+    // Event: user starts drawing
+    socket.on('draw:start', function (user, pathdata) {
+        io.emit('draw:start', user, pathdata);
+    });
+
+    //Event: user stops drawing
+    socket.on('draw:end', function (user, pathdata) {
+        io.emit('draw:end', user, pathdata);
     });
 });
 
@@ -23,3 +44,4 @@ io.on('connection', function(socket){
 http.listen(3000, function(){
     console.log('listening on *:3000');
 });
+

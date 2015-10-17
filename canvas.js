@@ -18,6 +18,7 @@ var colorRandom = '#'+Math.random().toString(16).substr(-6);
 function init() {
     // Initialize Canvas
     context = document.getElementById('canvasID').getContext("2d");
+    console.log("Canvas Initialized.");
 
     // Mouse Down
     $('#canvasID').mousedown(
@@ -66,7 +67,6 @@ function addClick(x, y, dragging) {
     clickX.push(x);
     clickY.push(y);
     clickDrag.push(dragging);
-    update(x, y, colorRandom, dragging);
 }
 
 function refresh() {
@@ -89,32 +89,6 @@ function refresh() {
         context.stroke();
     }
 }
-
-
-// This function sends the data for a circle to the server
-// so that the server can broadcast it to every other user
-function update(x, y, color, dragging) {
-
-    // Each Socket.IO connection has a unique session id
-    var sessionId = io.socket.sessionid;
-
-    // An object to describe the circle's draw data
-    var data = {
-        x: x,
-        y: y,
-        color: color,
-        dragging: dragging
-    };
-
-    // send an event with data and sessionId to the server
-    io.emit( 'draw', data, sessionId );
-
-    // Lets have a look at the data we're sending
-    console.log(data);
-
-}
-
-
 
 
 

@@ -2,47 +2,41 @@
 /*------------------------*/
 
 // initialization
+console.log('Initializing...');
 var express = require('express');
 var app = express();
-app.use('/', express.static(__dirname + '/'));
-var http = require('http').Server(app);
-var io = require('socket.io').listen(http);
+app.use(express.static(__dirname + '/'));
+var server = require('http').Server(app);
+var io = require('socket.io')(server);
+console.log('Success');
 
 // route handler
 app.get('/', function (req, res) {
     res.sendfile('index.html');
 });
 
+// make the http server listen on port 3000
+server.listen(3000, function () {
+    console.log('listening on *:3000');
+});
+
 
 var active_connection = 0;
 io.on('connection', function(socket){
     // user connection
-    console.log('a user connected. Active users: ' + active_connection.toString());
-    console.log('are you ok');
     active_connection++;
+    console.log('a user connected. Active users: ' + active_connection.toString());
 
-    // hello world
-    io.emit('this', { will: 'be received by everyone' });
+    socket.on('draw', function(data){
+        io.emit('draw', data);
+        console.log(data);
+    });
+
 
     // user disconnection
-    socket.on('disconnect', function () {
+    socket.on('disconnect', function(){
         active_connection--;
         console.log('user disconnected. Active users: ' + active_connection.toString());
     });
 
-    // Event: user starts drawing
-    socket.on('draw:start', function (user, pathdata) {
-        io.emit('draw:start', user, pathdata);
-    });
-
-    //Event: user stops drawing
-    socket.on('draw:end', function (user, pathdata) {
-        io.emit('draw:end', user, pathdata);
-    });
 });
-
-// make the http server listen on port 3000
-http.listen(3000, function () {
-    console.log('listening on *:3000');
-});
-

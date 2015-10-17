@@ -13,12 +13,14 @@ var colorYellow = '#FFFF00';
 var colorIndigo = '#4B0082';
 var colorRed = '#EE0000';
 var colorRandom = '#'+Math.random().toString(16).substr(-6);
-
+var userColor = colorRandom;
 
 function init() {
     // Initialize Canvas
     context = document.getElementById('canvasID').getContext("2d");
-    console.log("Canvas Initialized.");
+
+    // data
+    var data = {};
 
     // Mouse Down
     $('#canvasID').mousedown(
@@ -28,8 +30,15 @@ function init() {
             var mouseY = e.pageY - this.offsetTop;
             // Painter on
             paint = true;
-            addClick(mouseX, mouseY);
-            refresh();
+            draw(mouseX, mouseY, false, userColor);
+            data = {
+                x: clickX,
+                y: clickY,
+                dragging: clickDrag,
+                color: userColor
+            };
+            socket.emit('draw', data);
+
         }
     );
 
@@ -41,8 +50,14 @@ function init() {
             var mouseY = e.pageY - this.offsetTop;
 
             if (paint) {
-                addClick(mouseX, mouseY, true);
-                refresh();
+                draw(mouseX, mouseY, true, userColor);
+                data = {
+                    x: clickX,
+                    y: clickY,
+                    dragging: clickDrag,
+                    color: userColor
+                };
+                socket.emit('draw', data);
             }
         }
     );
@@ -61,19 +76,28 @@ function init() {
         }
     );
 
+    var socket = io.connect('http://localhost:3000');
+    socket.on('draw', function(data) {
+        refresh(data.color, data.x, data.y, data.dragging);
+    });
+
+
+
+
 }
 
-function addClick(x, y, dragging) {
+function draw(x, y, dragging, color) {
     clickX.push(x);
     clickY.push(y);
     clickDrag.push(dragging);
+    refresh(color, clickX, clickY, clickDrag);
 }
 
-function refresh() {
+function refresh(color, clickX, clickY, clickDrag) {
     // Clear Canvas
-    context.clearRect(0, 0, context.canvas.width, context.canvas.height);
+    //context.clearRect(0, 0, context.canvas.width, context.canvas.height);
     // Set up pen
-    context.strokeStyle = colorRandom;
+    context.strokeStyle = color;
     context.lineJoin = "round";
     context.lineWidth = 4;
 
@@ -89,10 +113,6 @@ function refresh() {
         context.stroke();
     }
 }
-
-
-
-
 
 
 

@@ -2,47 +2,17 @@
 <html>
     <head>
         <title>CO-OL Canvas - Collaborative Online Drawing App</title>
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
         <script type="text/javascript" src="canvas.js" canvas="canvasID"></script>
-        <script type="text/javascript" src="http://clicktime.herokuapp.com/socket.io/socket.io.js"></script>
+        <script type="text/javascript" src="socket.io/socket.io.js"></script>
+        <script>var socket = io();</script>
     </head>
     <body>
         <canvas id="canvasID" width="1200" height="800"></canvas>
         <script type="text/javascript">
             $(document).ready(function() { init(); });
         </script>
-        <script>
-            var base = 'http://clicktime.herokuapp.com:80/rooms/';
-            var roomName = 'COOLCanvas';    // Replace this with your own room name
 
-            var socket = io.connect(base + roomName);
-            /**
-             * These are the events that the websocket server will emit
-             *
-             * When sending messages, make sure the type is set to 'message', or other clients won't receive your data
-             * (e.g. socket.emit('message', { ... }); )
-             */
-            socket.on('welcome', function () {
-                // Connection is established, start using the socket
-            });
-
-            socket.on('message', function (data) {
-                // The 'message' event is emitted whenever another client sends a message
-                // Messages are automatically broadcasted to everyone in the room
-                socket.emit('message', 'this is a response message!');
-            });
-
-            socket.on('heartbeat', function () {
-                // You can listen on this event to make sure your connection is receiving events correctly
-                // The server will emit a heartbeat every 30 seconds to all connected clients
-            });
-
-            socket.on('error', function (err) {
-                // Sometimes things go wrong!
-                var type = err.type;    // This is the type of error that occurred
-                var message = err.message;    // This is a friendly message that should describe the error
-            });
-        </script>
     </body>
 </html>
 

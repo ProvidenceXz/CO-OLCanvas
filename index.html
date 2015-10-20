@@ -1,18 +1,45 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
     <head>
         <title>CO-OL Canvas - Collaborative Online Drawing App</title>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
-        <script type="text/javascript" src="canvas.js" canvas="canvasID"></script>
-        <script type="text/javascript" src="socket.io/socket.io.js"></script>
-        <script>var socket = io();</script>
-    </head>
-    <body>
-        <canvas id="canvasID" width="1200" height="800"></canvas>
+        <script type="text/javascript" src="canvas.js"></script>
+        <script type="text/javascript" src="ntc.js"></script>
+        <script type="text/javascript" src="http://clicktime.herokuapp.com/socket.io/socket.io.js"></script>
         <script type="text/javascript">
             $(document).ready(function() { init(); });
         </script>
+        <script type="text/javascript">
+            var base = 'http://clicktime.herokuapp.com:80/rooms/';
+            var roomName = 'COOL';
 
+            var socket = io.connect(base + roomName);
+
+            socket.on('welcome', function () {
+                // TODO: Prompt username
+                // TODO: Let user choose a lucky number and generate color accordingly
+                var colorName = nameColor(userColor);
+                alert("Welcome to CO-OLCanvas! Your color is: " + colorName[1]);
+            });
+
+            socket.on('message', function (data) {
+                draw(data.x, data.y, data.dragging, data.color);
+            });
+
+            socket.on('heartbeat', function () {
+                console.log('Your Current Status: Connected');
+            });
+
+            socket.on('error', function (err) {
+                var type = err.type;
+                var message = err.message;
+                alert(type + "! " + message);
+            });
+
+        </script>
+    </head>
+    <body>
+        <canvas id="canvasID" width="1200" height="800"></canvas>
     </body>
 </html>
 

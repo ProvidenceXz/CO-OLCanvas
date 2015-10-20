@@ -1,5 +1,5 @@
-/* Part II: Collaboration */
-/*------------------------*/
+
+
 
 // initialization
 console.log('Initializing...');
@@ -34,26 +34,22 @@ io.on('connection', function(socket){
     //}
     //
 
-    //socket.on('draw:ready', function(data){
-    //    io.emit('draw:ready', data);
+    //socket.on('draw:start', function(data){
+    //    io.emit('draw:start', data);
     //});
-
-    socket.on('draw:start', function(data){
-        io.emit('draw:start', data);
-    });
-
-    socket.on('draw:move', function(data){
-        io.emit('draw:move', data);
-    });
+    //
+    //socket.on('draw:move', function(data){
+    //    io.emit('draw:move', data);
+    //});
 
     //socket.on('draw:end', function(data){
     //    starter = data;
     //});
 
     // user disconnection
-    socket.on('disconnect', function(){
-        active_connection--;
-        console.log('user disconnected. Active users: ' + active_connection.toString());
-    });
+    //socket.on('disconnect', function(){
+    //    active_connection--;
+    //    console.log('user disconnected. Active users: ' + active_connection.toString());
+    //});
 
 });

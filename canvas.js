@@ -1,49 +1,46 @@
-/* Part I: Canvas */
-/*----------------*/
+/*********************************
+ *     Variable Declarations     *
+ *********************************/
 
-/* Variable Initializations */
 var context;
 var paint = false;
-var state = {};
 var clickX = [];
 var clickY = [];
 var clickDrag = [];
 var clickColor = [];
-// Color
-var colorBlue = '#0000FF';
-var colorYellow = '#FFFF00';
-var colorIndigo = '#4B0082';
-var colorRed = '#EE0000';
-var colorRandom = '#'+Math.random().toString(16).substr(-6);
-var userColor = colorRandom;
+var userColor = generateColor();
 
+
+
+/********************************
+ **                            **
+ **       Main Functions       **
+ **                            **
+ ********************************/
+
+/**
+ * Readies canvas element
+ * Monitors mouse activities
+ *
+ */
 function init() {
     // Initialize Canvas
     context = document.getElementById('canvasID').getContext("2d");
 
-    // data
-    var data = {};
-
-    // Mouse Down
+    // Mouse Down Event
     $('#canvasID').mousedown(
         function(event) {
             // Get mouse location
             var mouseX = event.pageX - this.offsetLeft;
             var mouseY = event.pageY - this.offsetTop;
-            // Painter on
+            // Start painting
             paint = true;
-            data = {
-                x: mouseX,
-                y: mouseY,
-                dragging: false,
-                color: userColor
-            };
-            socket.emit('draw:start', data);
-
+            draw(mouseX, mouseY, false, userColor);
+            sendToServer(mouseX, mouseY, false, userColor);
         }
     );
 
-    // Mouse Move
+    // Mouse Move Event
     $('#canvasID').mousemove(
         function(event) {
             // Get mouse location
@@ -51,68 +48,49 @@ function init() {
             var mouseY = event.pageY - this.offsetTop;
 
             if (paint) {
-                data = {
-                    x: mouseX,
-                    y: mouseY,
-                    dragging: true,
-                    color: userColor
-                };
-                socket.emit('draw:move', data);
+                draw(mouseX, mouseY, true, userColor);
+                sendToServer(mouseX, mouseY, true, userColor);
             }
         }
     );
 
-    // Mouse Up
+    // Mouse Up Event
     $('#canvasID').mouseup(
         function(event) {
             paint = false;
         }
     );
 
-    // Mouse Leave
+    // Mouse Leave Event
     $('#canvasID').mouseleave(
         function(event) {
             paint = false;
         }
     );
-
-    var socket = io.connect('http://localhost:3000');
-    //socket.on('draw:ready', function(data) {
-    //    clickX = data.xs;
-    //    clickY = data.ys;
-    //    clickDrag = data.drags;
-    //    clickColor = data.colors;
-    //});
-    socket.on('draw:start', function(data) {
-        draw(data.x, data.y, data.dragging, data.color);
-    });
-    socket.on('draw:move', function(data) {
-        draw(data.x, data.y, data.dragging, data.color);
-    });
-
-
-
-
-
 }
 
+
+/**
+ * Keeps track of mouse movements
+ *
+ * @param x - horizontal location of mouse click
+ * @param y - vertical location of mouse click
+ * @param dragging - if mouse is dragging
+ * @param color - current color used
+ */
 function draw(x, y, dragging, color) {
     clickX.push(x);
     clickY.push(y);
     clickDrag.push(dragging);
     clickColor.push(color);
-    // Send current state to server
-    state = {
-        xs: clickX,
-        ys: clickY,
-        drags: clickDrag,
-        colors: clickColor
-    };
-    refresh(clickX, clickY, clickDrag);
-    //socket.emit('draw:end', state);
+    refresh();
 }
 
-function refresh(clickX, clickY, clickDrag) {
+/**
+ * Draws the canvas according to tracks
+ *
+ */
+function refresh() {
     // Clear Canvas
     context.clearRect(0, 0, context.canvas.width, context.canvas.height);
     // Set up pen
@@ -135,12 +113,49 @@ function refresh(clickX, clickY, clickDrag) {
 
 
 
+/*********************************
+ **                             **
+ **       Helper Functions      **
+ **                             **
+ *********************************/
 
 
+/**
+ * Finds the closest name for hex color.
+ *
+ * @param color - hex color string
+ * @returns {string} - nearest color name
+ */
+function nameColor(color) {
+    return ntc.name(color);
+}
 
 
+/**
+ * Generates random hex color.
+ *
+ * @returns {string} - random hex color
+ */
+function generateColor() {
+    return '#'+Math.random().toString(16).substr(-6);
+}
 
 
-
-
-
+/**
+ * Emits current drawing data to server
+ *
+ * @param x - horizontal location of mouse click
+ * @param y - vertical location of mouse click
+ * @param dragging - if mouse is dragging
+ * @param color - current color used
+ */
+function sendToServer(x, y, dragging, color) {
+    // An object containing drawing data
+    var data = {
+        x: x,
+        y: y,
+        dragging: dragging,
+        color: color
+    };
+    socket.emit('message', data);
+}

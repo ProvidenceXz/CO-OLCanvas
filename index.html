@@ -4,7 +4,7 @@
         <title>CO-OL Canvas - Collaborative Online Drawing App</title>
         <style type="text/css">
             #canvasID {
-                position:fixed;
+                position: fixed;
                 top: 50%;
                 left: 50%;
                 margin-top: -400px; /*set to a negative number 1/2 of height*/
@@ -13,6 +13,7 @@
             }
 
             #bkgID {
+                position: fixed;
                 background-color: lightgray;
             }
 
@@ -37,15 +38,19 @@
 
             var socket = io.connect(base + roomName);
 
+            var existing = {};
             socket.on('welcome', function () {
                 // TODO: Prompt username
                 // TODO: Let user choose a lucky number and generate color accordingly
+
                 var colorName = nameColor(userColor);
                 alert("Welcome to CO-OLCanvas! Your color is: " + colorName[1]);
             });
 
             socket.on('message', function (data) {
-                draw(data.x, data.y, data.dragging, data.color, data.size);
+                if (data.header == "draw") {
+                    draw(data.x, data.y, data.dragging, data.color, data.size);
+                }
             });
 
             socket.on('heartbeat', function () {
@@ -61,8 +66,8 @@
         </script>
     </head>
     <body>
-        <canvas id="bkgID" width="1760" height="860" ></canvas>
-        <canvas id="canvasID" width="1200" height="800" style="border:2px solid #000000;"></canvas>
+        <canvas id="bkgID" width="1920" height="960" ></canvas>
+        <canvas id="canvasID" width="1200" height="800" style="border:2px solid black;"></canvas>
     </body>
 </html>
 

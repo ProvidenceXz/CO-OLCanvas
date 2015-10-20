@@ -1,3 +1,7 @@
+/*
+ * Author: ProvidenceXz
+ */
+
 /*********************************
  *     Variable Declarations     *
  *********************************/
@@ -25,12 +29,19 @@ var userColor = generateColor();
  * Readies canvas element
  * Monitors mouse activities
  *
+ * @TODO - Create Background Canvas and buttons/pens
  */
 function init() {
     // Initialize Background
     background = document.getElementById('bkgID').getContext("2d");
-    background.canvas.width = window.innerWidth;
-    background.canvas.height = window.innerHeight;
+    // Background auto-resize
+    $(window).resize(
+        function() {
+            background.canvas.width = window.innerWidth;
+            background.canvas.height = window.innerHeight;
+        }
+    );
+
     // Initialize Canvas
     context = document.getElementById('canvasID').getContext("2d");
 
@@ -47,7 +58,7 @@ function init() {
             // Start painting
             paint = true;
             draw(mouseX, mouseY, false, userColor, userSize);
-            sendToServer(mouseX, mouseY, false, userColor, userSize);
+            sendDrawData(mouseX, mouseY, false, userColor, userSize, "draw");
         }
     );
 
@@ -63,7 +74,7 @@ function init() {
 
             if (paint) {
                 draw(mouseX, mouseY, true, userColor, userSize);
-                sendToServer(mouseX, mouseY, true, userColor, userSize);
+                sendDrawData(mouseX, mouseY, true, userColor, userSize, "draw");
             }
         }
     );
@@ -72,6 +83,7 @@ function init() {
     $('#canvasID').mouseup(
         function(event) {
             paint = false;
+            //sendEndState(clickX, clickY, clickDrag, clickColor, clickSize);
         }
     );
 
@@ -79,6 +91,7 @@ function init() {
     $('#canvasID').mouseleave(
         function(event) {
             paint = false;
+            //sendEndState(clickX, clickY, clickDrag, clickColor, clickSize);
         }
     );
 }
@@ -109,7 +122,6 @@ function draw(x, y, dragging, color, size) {
 function refresh() {
     // clear up the canvas
     clearCanvas();
-
     context.lineJoin = "round";
 
     // Draw
@@ -198,9 +210,10 @@ function clearCanvas() {
  * @param color - current color used
  * @param size - current pen size chosen
  */
-function sendToServer(x, y, dragging, color, size) {
+function sendDrawData(x, y, dragging, color, size) {
     // An object containing drawing data
     var data = {
+        header: "draw",
         x: x,
         y: y,
         dragging: dragging,
@@ -209,3 +222,17 @@ function sendToServer(x, y, dragging, color, size) {
     };
     socket.emit('message', data);
 }
+
+/**************************************************
+function sendEndState(x, y, drag, color, size) {
+    var data = {
+        header: "end",
+        x: x,
+        y: y,
+        drag: drag,
+        color: color,
+        size: size
+    };
+    socket.emit('message', data);
+}
+ ****************************************************/

@@ -9,6 +9,7 @@ app.use(express.static(__dirname + '/'));
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
 console.log('Success');
+var starter = {};
 
 // route handler
 app.get('/', function (req, res) {
@@ -27,11 +28,27 @@ io.on('connection', function(socket){
     active_connection++;
     console.log('a user connected. Active users: ' + active_connection.toString());
 
-    socket.on('draw', function(data){
-        io.emit('draw', data);
-        console.log(data);
+    // Send starter canvas to new user
+    //if (active_connection != 0) {
+    //    socket.emit('draw:ready', starter);
+    //}
+    //
+
+    //socket.on('draw:ready', function(data){
+    //    io.emit('draw:ready', data);
+    //});
+
+    socket.on('draw:start', function(data){
+        io.emit('draw:start', data);
     });
 
+    socket.on('draw:move', function(data){
+        io.emit('draw:move', data);
+    });
+
+    //socket.on('draw:end', function(data){
+    //    starter = data;
+    //});
 
     // user disconnection
     socket.on('disconnect', function(){

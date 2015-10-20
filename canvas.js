@@ -4,9 +4,11 @@
 /* Variable Initializations */
 var context;
 var paint = false;
+var state = {};
 var clickX = [];
 var clickY = [];
 var clickDrag = [];
+var clickColor = [];
 // Color
 var colorBlue = '#0000FF';
 var colorYellow = '#FFFF00';
@@ -24,62 +26,70 @@ function init() {
 
     // Mouse Down
     $('#canvasID').mousedown(
-        function(e) {
+        function(event) {
             // Get mouse location
-            var mouseX = e.pageX - this.offsetLeft;
-            var mouseY = e.pageY - this.offsetTop;
+            var mouseX = event.pageX - this.offsetLeft;
+            var mouseY = event.pageY - this.offsetTop;
             // Painter on
             paint = true;
-            draw(mouseX, mouseY, false, userColor);
             data = {
-                x: clickX,
-                y: clickY,
-                dragging: clickDrag,
+                x: mouseX,
+                y: mouseY,
+                dragging: false,
                 color: userColor
             };
-            socket.emit('draw', data);
+            socket.emit('draw:start', data);
 
         }
     );
 
     // Mouse Move
     $('#canvasID').mousemove(
-        function(e) {
+        function(event) {
             // Get mouse location
-            var mouseX = e.pageX - this.offsetLeft;
-            var mouseY = e.pageY - this.offsetTop;
+            var mouseX = event.pageX - this.offsetLeft;
+            var mouseY = event.pageY - this.offsetTop;
 
             if (paint) {
-                draw(mouseX, mouseY, true, userColor);
                 data = {
-                    x: clickX,
-                    y: clickY,
-                    dragging: clickDrag,
+                    x: mouseX,
+                    y: mouseY,
+                    dragging: true,
                     color: userColor
                 };
-                socket.emit('draw', data);
+                socket.emit('draw:move', data);
             }
         }
     );
 
     // Mouse Up
     $('#canvasID').mouseup(
-        function(e) {
+        function(event) {
             paint = false;
         }
     );
 
     // Mouse Leave
     $('#canvasID').mouseleave(
-        function(e) {
+        function(event) {
             paint = false;
         }
     );
 
     var socket = io.connect('http://localhost:3000');
-    socket.on('draw', function(data) {
-        refresh(data.color, data.x, data.y, data.dragging);
+    //socket.on('draw:ready', function(data) {
+    //    clickX = data.xs;
+    //    clickY = data.ys;
+    //    clickDrag = data.drags;
+    //    clickColor = data.colors;
+    //});
+    socket.on('draw:start', function(data) {
+        draw(data.x, data.y, data.dragging, data.color);
     });
+    socket.on('draw:move', function(data) {
+        draw(data.x, data.y, data.dragging, data.color);
+    });
+
 
 
 
@@ -90,19 +100,28 @@ function draw(x, y, dragging, color) {
     clickX.push(x);
     clickY.push(y);
     clickDrag.push(dragging);
-    refresh(color, clickX, clickY, clickDrag);
+    clickColor.push(color);
+    // Send current state to server
+    state = {
+        xs: clickX,
+        ys: clickY,
+        drags: clickDrag,
+        colors: clickColor
+    };
+    refresh(clickX, clickY, clickDrag);
+    //socket.emit('draw:end', state);
 }
 
-function refresh(color, clickX, clickY, clickDrag) {
+function refresh(clickX, clickY, clickDrag) {
     // Clear Canvas
-    //context.clearRect(0, 0, context.canvas.width, context.canvas.height);
+    context.clearRect(0, 0, context.canvas.width, context.canvas.height);
     // Set up pen
-    context.strokeStyle = color;
     context.lineJoin = "round";
     context.lineWidth = 4;
 
     for (var i = 0; i < clickX.length; i++) {
         context.beginPath();
+        context.strokeStyle = clickColor[i];
         if (clickDrag[i] && i) {
             context.moveTo(clickX[i - 1], clickY[i - 1]);
         } else {

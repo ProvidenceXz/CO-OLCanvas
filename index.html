@@ -2,6 +2,22 @@
 <html lang="en">
     <head>
         <title>CO-OL Canvas - Collaborative Online Drawing App</title>
+        <style type="text/css">
+            #canvasID {
+                position:fixed;
+                top: 50%;
+                left: 50%;
+                width: 1200px;
+                height: 800px;
+                margin-top: -400px; /*set to a negative number 1/2 of height*/
+                margin-left: -600px; /*set to a negative number 1/2 of width*/
+                background-color: white;
+            }
+
+            body {
+                background-color: lightgray;
+            }
+        </style>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
         <script type="text/javascript" src="canvas.js"></script>
         <script type="text/javascript" src="ntc.js"></script>
@@ -23,7 +39,7 @@
             });
 
             socket.on('message', function (data) {
-                draw(data.x, data.y, data.dragging, data.color);
+                draw(data.x, data.y, data.dragging, data.color, data.size);
             });
 
             socket.on('heartbeat', function () {
@@ -39,7 +55,7 @@
         </script>
     </head>
     <body>
-        <canvas id="canvasID" width="1200" height="800"></canvas>
+        <canvas id="canvasID" width="1200" height="800" style="border:1px solid #000000;"></canvas>
     </body>
 </html>
 

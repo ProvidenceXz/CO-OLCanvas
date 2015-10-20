@@ -7,7 +7,9 @@ var paint = false;
 var clickX = [];
 var clickY = [];
 var clickDrag = [];
+var clickSize = [];
 var clickColor = [];
+var userSize = "normal";
 var userColor = generateColor();
 
 
@@ -35,8 +37,8 @@ function init() {
             var mouseY = event.pageY - this.offsetTop;
             // Start painting
             paint = true;
-            draw(mouseX, mouseY, false, userColor);
-            sendToServer(mouseX, mouseY, false, userColor);
+            draw(mouseX, mouseY, false, userColor, userSize);
+            sendToServer(mouseX, mouseY, false, userColor, userSize);
         }
     );
 
@@ -48,8 +50,8 @@ function init() {
             var mouseY = event.pageY - this.offsetTop;
 
             if (paint) {
-                draw(mouseX, mouseY, true, userColor);
-                sendToServer(mouseX, mouseY, true, userColor);
+                draw(mouseX, mouseY, true, userColor, userSize);
+                sendToServer(mouseX, mouseY, true, userColor, userSize);
             }
         }
     );
@@ -77,12 +79,14 @@ function init() {
  * @param y - vertical location of mouse click
  * @param dragging - if mouse is dragging
  * @param color - current color used
+ * @param size - current pen size chosen
  */
-function draw(x, y, dragging, color) {
+function draw(x, y, dragging, color, size) {
     clickX.push(x);
     clickY.push(y);
     clickDrag.push(dragging);
     clickColor.push(color);
+    clickSize.push(size);
     refresh();
 }
 
@@ -91,15 +95,14 @@ function draw(x, y, dragging, color) {
  *
  */
 function refresh() {
-    // Clear Canvas
-    context.clearRect(0, 0, context.canvas.width, context.canvas.height);
-    // Set up pen
-    context.lineJoin = "round";
-    context.lineWidth = 4;
+    // clear up the canvas
+    clearCanvas();
 
+    context.lineJoin = "round";
+
+    // Draw
     for (var i = 0; i < clickX.length; i++) {
         context.beginPath();
-        context.strokeStyle = clickColor[i];
         if (clickDrag[i] && i) {
             context.moveTo(clickX[i - 1], clickY[i - 1]);
         } else {
@@ -107,6 +110,8 @@ function refresh() {
         }
         context.lineTo(clickX[i], clickY[i]);
         context.closePath();
+        context.strokeStyle = clickColor[i];
+        context.lineWidth = getLineWidth(clickSize[i]);
         context.stroke();
     }
 }
@@ -124,7 +129,7 @@ function refresh() {
  * Finds the closest name for hex color.
  *
  * @param color - hex color string
- * @returns {string} - nearest color name
+ * @returns string - nearest color name
  */
 function nameColor(color) {
     return ntc.name(color);
@@ -134,12 +139,43 @@ function nameColor(color) {
 /**
  * Generates random hex color.
  *
- * @returns {string} - random hex color
+ * @returns string - random hex color
  */
 function generateColor() {
-    return '#'+Math.random().toString(16).substr(-6);
+    return '#' + Math.random().toString(16).substr(-6);
 }
 
+
+/**
+ * Maps line width to corresponding pen sizes
+ *
+ * @param size - {"small", "normal", "large", "huge"}
+ * @returns int - corresponding size
+ */
+function getLineWidth(size) {
+    var radius;
+    if (size == "small") {
+        radius = 2;
+    } else if (size == "normal") {
+        radius = 5;
+    } else if (size == "large") {
+        radius = 10;
+    } else if (size == "huge") {
+        radius = 15;
+    } else {
+        alert("Error: Invalid pen size. Reset to normal");
+        radius = 5;
+    }
+    return radius;
+}
+
+/**
+ * Clean up the canvas to prevent repetitive rendering
+ *
+ */
+function clearCanvas() {
+    context.clearRect(0, 0, context.canvas.width, context.canvas.height);
+}
 
 /**
  * Emits current drawing data to server
@@ -148,14 +184,16 @@ function generateColor() {
  * @param y - vertical location of mouse click
  * @param dragging - if mouse is dragging
  * @param color - current color used
+ * @param size - current pen size chosen
  */
-function sendToServer(x, y, dragging, color) {
+function sendToServer(x, y, dragging, color, size) {
     // An object containing drawing data
     var data = {
         x: x,
         y: y,
         dragging: dragging,
-        color: color
+        color: color,
+        size: size
     };
     socket.emit('message', data);
 }

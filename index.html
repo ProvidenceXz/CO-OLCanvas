@@ -38,7 +38,6 @@
 
             var socket = io.connect(base + roomName);
 
-            var existing = {};
             socket.on('welcome', function () {
                 // TODO: Prompt username
                 // TODO: Let user choose a lucky number and generate color accordingly

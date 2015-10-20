@@ -1,4 +1,5 @@
-
+// This file commented out since using remote server
+/*
 
 
 // initialization
@@ -29,27 +30,28 @@ io.on('connection', function(socket){
     console.log('a user connected. Active users: ' + active_connection.toString());
 
     // Send starter canvas to new user
-    //if (active_connection != 0) {
-    //    socket.emit('draw:ready', starter);
-    //}
-    //
+    if (active_connection != 0) {
+        socket.emit('draw:ready', starter);
+    }
 
-    //socket.on('draw:start', function(data){
-    //    io.emit('draw:start', data);
-    //});
-    //
-    //socket.on('draw:move', function(data){
-    //    io.emit('draw:move', data);
-    //});
 
-    //socket.on('draw:end', function(data){
-    //    starter = data;
-    //});
+    socket.on('draw:start', function(data){
+        io.emit('draw:start', data);
+    });
+
+    socket.on('draw:move', function(data){
+        io.emit('draw:move', data);
+    });
+
+    socket.on('draw:end', function(data){
+        starter = data;
+    });
 
     // user disconnection
-    //socket.on('disconnect', function(){
-    //    active_connection--;
-    //    console.log('user disconnected. Active users: ' + active_connection.toString());
-    //});
+    socket.on('disconnect', function(){
+        active_connection--;
+        console.log('user disconnected. Active users: ' + active_connection.toString());
+    });
 
 });
+    */

@@ -7,16 +7,22 @@
                 position:fixed;
                 top: 50%;
                 left: 50%;
-                width: 1200px;
-                height: 800px;
                 margin-top: -400px; /*set to a negative number 1/2 of height*/
                 margin-left: -600px; /*set to a negative number 1/2 of width*/
                 background-color: white;
             }
 
-            body {
+            #bkgID {
                 background-color: lightgray;
             }
+
+            html, body {
+                width:  100%;
+                height: 100%;
+                margin: 0;
+            }
+
+
         </style>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
         <script type="text/javascript" src="canvas.js"></script>
@@ -55,7 +61,8 @@
         </script>
     </head>
     <body>
-        <canvas id="canvasID" width="1200" height="800" style="border:1px solid #000000;"></canvas>
+        <canvas id="bkgID" width="1760" height="860" ></canvas>
+        <canvas id="canvasID" width="1200" height="800" style="border:2px solid #000000;"></canvas>
     </body>
 </html>
 

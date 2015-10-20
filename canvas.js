@@ -2,6 +2,7 @@
  *     Variable Declarations     *
  *********************************/
 
+var background;
 var context;
 var paint = false;
 var clickX = [];
@@ -26,6 +27,10 @@ var userColor = generateColor();
  *
  */
 function init() {
+    // Initialize Background
+    background = document.getElementById('bkgID').getContext("2d");
+    background.canvas.width = window.innerWidth;
+    background.canvas.height = window.innerHeight;
     // Initialize Canvas
     context = document.getElementById('canvasID').getContext("2d");
 
@@ -35,6 +40,10 @@ function init() {
             // Get mouse location
             var mouseX = event.pageX - this.offsetLeft;
             var mouseY = event.pageY - this.offsetTop;
+            // Fix HTML5 scrolling bug
+            mouseX -= window.pageXOffset;
+            mouseY -= window.pageYOffset;
+
             // Start painting
             paint = true;
             draw(mouseX, mouseY, false, userColor, userSize);
@@ -48,6 +57,9 @@ function init() {
             // Get mouse location
             var mouseX = event.pageX - this.offsetLeft;
             var mouseY = event.pageY - this.offsetTop;
+            // Fix HTML5 scrolling bug
+            mouseX -= window.pageXOffset;
+            mouseY -= window.pageYOffset;
 
             if (paint) {
                 draw(mouseX, mouseY, true, userColor, userSize);

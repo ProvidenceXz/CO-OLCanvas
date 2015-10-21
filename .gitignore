@@ -1,0 +1,8 @@
+.idea/
+.idea/*
+.vs/
+.vs/*
+web.config
+node_modules/
+*.log
+*.sln

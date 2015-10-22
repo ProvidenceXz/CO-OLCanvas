@@ -1,5 +1,6 @@
 /*
  * Author: ProvidenceXz
+ * @TODO?Chatting System, Text, Undo, pen size&type, email invitation
  */
 
 /*********************************
@@ -34,16 +35,21 @@ var userColor = generateColor();
 function init() {
     // Initialize Background
     background = document.getElementById('bkgID').getContext("2d");
+    var room = document.getElementById("room");
+    background.drawImage(room, 0, 0);
     // Background auto-resize
     $(window).resize(
         function() {
             background.canvas.width = window.innerWidth;
             background.canvas.height = window.innerHeight;
+            background.drawImage(room, 0, 0);
         }
     );
 
     // Initialize Canvas
     context = document.getElementById('canvasID').getContext("2d");
+    var frame = document.getElementById("frame");
+    context.drawImage(frame, 0, 0);
 
     // Mouse Down Event
     $('#canvasID').mousedown(
@@ -120,9 +126,16 @@ function draw(x, y, dragging, color, size) {
  *
  */
 function refresh() {
-    // clear up the canvas
+    // Clear up the canvas
     clearCanvas();
+    context.drawImage(frame, 0, 0);
     context.lineJoin = "round";
+
+    // Restrict drawing area
+    context.save();
+    context.beginPath();
+    context.rect(62, 45, 994, 552);
+    context.clip();
 
     // Draw
     for (var i = 0; i < clickX.length; i++) {
@@ -138,6 +151,8 @@ function refresh() {
         context.lineWidth = getLineWidth(clickSize[i]);
         context.stroke();
     }
+
+    context.restore();
 }
 
 

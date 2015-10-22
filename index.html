@@ -5,10 +5,8 @@
         <style type="text/css">
             #canvasID {
                 position: fixed;
-                top: 50%;
-                left: 50%;
-                margin-top: -400px; /*set to a negative number 1/2 of height*/
-                margin-left: -600px; /*set to a negative number 1/2 of width*/
+                left: 401px;
+                top: 100px;
                 background-color: white;
             }
 
@@ -17,12 +15,21 @@
                 background-color: lightgray;
             }
 
-            html, body {
+            body {
                 width:  100%;
                 height: 100%;
                 margin: 0;
+                font: 13px Helvetica, Arial;
             }
 
+            /* Chat */
+            * { margin: 0; padding: 0; box-sizing: border-box; }
+            form { background: gray; padding: 2px; position: fixed; bottom:80px; left: 40px;  }
+            form input { border: 0; padding: 10px; margin-right: .5%; }
+            form button {  background: rgb(130, 224, 255); border: none; padding: 10px; }
+            #messages { list-style-type: none; margin: 0; padding: 0; }
+            #messages li { padding: 5px 10px; }
+            #messages li:nth-child(odd) { background: gray; }
 
         </style>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
@@ -65,8 +72,15 @@
         </script>
     </head>
     <body>
+        <img id="room" src="img/bkg.png" alt="Background Room" width="1920" height="960" hidden="hidden">
+        <img id="frame" src="img/canvas.png" alt="Canvas Frame" width="1118" height="642" hidden="hidden">
         <canvas id="bkgID" width="1920" height="960" ></canvas>
-        <canvas id="canvasID" width="1200" height="800" style="border:2px solid black;"></canvas>
+        <canvas id="canvasID" width="1118" height="642" style="border:0 solid black;"></canvas>
+        <ul id="messages"></ul>
+        <form action="">
+            <input id="m" autocomplete="off" /><button>Send</button>
+        </form>
+
     </body>
 </html>
 

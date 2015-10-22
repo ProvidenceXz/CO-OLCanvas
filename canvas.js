@@ -36,13 +36,19 @@ function init() {
     // Initialize Background
     background = document.getElementById('bkgID').getContext("2d");
     var room = document.getElementById("room");
+    //var table = document.getElementById("table");
     background.drawImage(room, 0, 0);
+    //background.drawImage(pen, 1600, 250);
+    //background.drawImage(eraser, 1600, 350);
+
     // Background auto-resize
     $(window).resize(
         function() {
             background.canvas.width = window.innerWidth;
             background.canvas.height = window.innerHeight;
             background.drawImage(room, 0, 0);
+            //background.drawImage(pen, 1600, 250);
+            //background.drawImage(eraser, 1600, 350);
         }
     );
 
@@ -52,68 +58,58 @@ function init() {
     context.drawImage(frame, 0, 0);
 
     // Mouse Down Event
-    $('#canvasID').mousedown(
-        function(event) {
-            // Get mouse location
-            var mouseX = event.pageX - this.offsetLeft;
-            var mouseY = event.pageY - this.offsetTop;
-            // Fix HTML5 scrolling bug
-            mouseX -= window.pageXOffset;
-            mouseY -= window.pageYOffset;
+    $('#canvasID').mousedown( function(event) {
+        // Get mouse location
+        var mouseX = event.pageX - this.offsetLeft;
+        var mouseY = event.pageY - this.offsetTop;
+        // Fix HTML5 scrolling bug
+        mouseX -= window.pageXOffset;
+        mouseY -= window.pageYOffset;
 
-            // Start painting
-            paint = true;
-            draw(mouseX, mouseY, false, userColor, userSize);
-            sendDrawData(mouseX, mouseY, false, userColor, userSize, "draw");
-        }
-    );
+        // Start painting
+        paint = true;
+        draw(mouseX, mouseY, false, userColor, userSize);
+        sendDrawData(mouseX, mouseY, false, userColor, userSize);
+    });
 
     // Mouse Move Event
-    $('#canvasID').mousemove(
-        function(event) {
-            // Get mouse location
-            var mouseX = event.pageX - this.offsetLeft;
-            var mouseY = event.pageY - this.offsetTop;
-            // Fix HTML5 scrolling bug
-            mouseX -= window.pageXOffset;
-            mouseY -= window.pageYOffset;
+    $('#canvasID').mousemove( function(event) {
+        // Get mouse location
+        var mouseX = event.pageX - this.offsetLeft;
+        var mouseY = event.pageY - this.offsetTop;
+        // Fix HTML5 scrolling bug
+        mouseX -= window.pageXOffset;
+        mouseY -= window.pageYOffset;
 
-            if (paint) {
-                draw(mouseX, mouseY, true, userColor, userSize);
-                sendDrawData(mouseX, mouseY, true, userColor, userSize, "draw");
-            }
+        if (paint) {
+            draw(mouseX, mouseY, true, userColor, userSize);
+            sendDrawData(mouseX, mouseY, true, userColor, userSize);
         }
-    );
+    });
 
     // Mouse Up Event
-    $('#canvasID').mouseup(
-        function(event) {
-            paint = false;
-            //sendEndState(clickX, clickY, clickDrag, clickColor, clickSize);
-        }
-    );
+    $('#canvasID').mouseup( function(event) {
+        paint = false;
+        //sendEndState(clickX, clickY, clickDrag, clickColor, clickSize);
+    });
 
     // Mouse Leave Event
-    $('#canvasID').mouseleave(
-        function(event) {
-            paint = false;
-            //sendEndState(clickX, clickY, clickDrag, clickColor, clickSize);
-        }
-    );
+    $('#canvasID').mouseleave( function(event) {
+        paint = false;
+        //sendEndState(clickX, clickY, clickDrag, clickColor, clickSize);
+    });
 
     // Send Chat Message
-    $('form').submit(
-        function() {
-            var msg = {
-                header: "msg",
-                txt: $('#m').val(),
-                color: userColor
-            };
-            socket.emit('message', msg);
-            updateMessage(msg);
-            return false;
-        }
-    );
+    $('form').submit( function() {
+        var msg = {
+            header: "msg",
+            txt: $('#m').val(),
+            color: userColor
+        };
+        socket.emit('message', msg);
+        updateMessage(msg);
+        return false;
+    });
 }
 
 
@@ -253,7 +249,7 @@ function sendDrawData(x, y, dragging, color, size) {
 }
 
 /**
- * Updates message
+ * Updates message with corresponding color
  *
  * @param msg - the object containing message, color
  */

@@ -72,8 +72,7 @@
             var socket = io.connect(base + roomName);
 
             socket.on('welcome', function () {
-                // TODO: Prompt username
-                // TODO: Let user choose a lucky number and generate color accordingly
+                // TODO: update cartoon kids with corresponding colored hair/shirt
 
                 var colorName = nameColor(userColor);
                 alert("Welcome to CO-OLCanvas! Your color is: " + colorName[1]);
@@ -100,8 +99,10 @@
         </script>
     </head>
     <body>
+        <img id="table" src="img/table.png" alt="Table" width="483" height="214" hidden="hidden">
         <img id="room" src="img/bkg.png" alt="Background Room" width="1920" height="960" hidden="hidden">
         <img id="frame" src="img/canvas.png" alt="Canvas Frame" width="1118" height="642" hidden="hidden">
+
         <canvas id="bkgID" width="1920" height="960" ></canvas>
         <canvas id="canvasID" width="1118" height="642" style="border:0 solid black;"></canvas>
         <ul id="messages"></ul>

@@ -17,7 +17,7 @@ var clickSize = [];
 var clickColor = [];
 var userSize = "normal";
 var userColor = generateColor();
-
+var msgCounter = 0;
 
 
 /********************************
@@ -98,6 +98,20 @@ function init() {
         function(event) {
             paint = false;
             //sendEndState(clickX, clickY, clickDrag, clickColor, clickSize);
+        }
+    );
+
+    // Send Chat Message
+    $('form').submit(
+        function() {
+            var msg = {
+                header: "msg",
+                txt: $('#m').val(),
+                color: userColor
+            };
+            socket.emit('message', msg);
+            updateMessage(msg);
+            return false;
         }
     );
 }
@@ -237,6 +251,19 @@ function sendDrawData(x, y, dragging, color, size) {
     };
     socket.emit('message', data);
 }
+
+/**
+ * Updates message
+ *
+ * @param msg - the object containing message, color
+ */
+function updateMessage(msg) {
+    msgCounter++;
+    $('#messages').append($('<li>').text(msg.txt));
+    $('#messages li:nth-child(' + msgCounter.toString() + ')').css('color', msg.color);
+    $('#m').val('');
+}
+
 
 /**************************************************
 function sendEndState(x, y, drag, color, size) {

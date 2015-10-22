@@ -19,17 +19,43 @@
                 width:  100%;
                 height: 100%;
                 margin: 0;
-                font: 13px Helvetica, Arial;
             }
 
             /* Chat */
-            * { margin: 0; padding: 0; box-sizing: border-box; }
-            form { background: gray; padding: 2px; position: fixed; bottom:80px; left: 40px;  }
-            form input { border: 0; padding: 10px; margin-right: .5%; }
-            form button {  background: rgb(130, 224, 255); border: none; padding: 10px; }
-            #messages { list-style-type: none; margin: 0; padding: 0; }
-            #messages li { padding: 5px 10px; }
-            #messages li:nth-child(odd) { background: gray; }
+            form {
+                background: transparent;
+                position: fixed;
+                bottom: 218px;
+                left: 80px;
+            }
+            form input {
+                background: transparent;
+                border-top: none;
+                border-left: none;
+                border-right: none;
+                border-bottom: solid 1px rgba(132,128,127,0.5);
+                padding: 10px;
+            }
+            form button {
+                background: linear-gradient(to right, rgba(132,128,127,0), rgba(132,128,127,0.5));
+                border-top: none;
+                border-left: none;
+                border-right: solid 2px rgba(132,128,127,0.5);
+                border-bottom: solid 1px rgba(132,128,127,0.5);
+                padding: 10px;
+            }
+            #messages {
+                list-style-type: none;
+                position: fixed;
+                margin: 0;
+                padding: 0;
+                bottom: 255px;
+                left: 80px;
+            }
+            #messages li {
+                padding: 5px 10px;
+            }
+            #messages li:nth-child(odd) { background: transparent; }
 
         </style>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
@@ -56,6 +82,8 @@
             socket.on('message', function (data) {
                 if (data.header == "draw") {
                     draw(data.x, data.y, data.dragging, data.color, data.size);
+                } else if (data.header == "msg") {
+                    updateMessage(data);
                 }
             });
 

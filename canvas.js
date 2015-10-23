@@ -1,6 +1,5 @@
 /*
- * Author: ProvidenceXz
- * @TODO?Chatting System, Text, Undo, pen size&type, email invitation
+ * Author: Provi Zhang
  */
 
 /*********************************
@@ -30,7 +29,6 @@ var msgCounter = 0;
  * Readies canvas element
  * Monitors mouse activities
  *
- * @TODO - Create Background Canvas and buttons/pens
  */
 function init() {
     // Initialize Background
@@ -90,13 +88,11 @@ function init() {
     // Mouse Up Event
     $('#canvasID').mouseup( function(event) {
         paint = false;
-        //sendEndState(clickX, clickY, clickDrag, clickColor, clickSize);
     });
 
     // Mouse Leave Event
     $('#canvasID').mouseleave( function(event) {
         paint = false;
-        //sendEndState(clickX, clickY, clickDrag, clickColor, clickSize);
     });
 
     // Send Chat Message
@@ -259,18 +255,3 @@ function updateMessage(msg) {
     $('#messages li:nth-child(' + msgCounter.toString() + ')').css('color', msg.color);
     $('#m').val('');
 }
-
-
-/**************************************************
-function sendEndState(x, y, drag, color, size) {
-    var data = {
-        header: "end",
-        x: x,
-        y: y,
-        drag: drag,
-        color: color,
-        size: size
-    };
-    socket.emit('message', data);
-}
- ****************************************************/

@@ -66,14 +66,13 @@
             $(document).ready(function() { init(); });
         </script>
         <script type="text/javascript">
+            // Socket
             var base = 'http://clicktime.herokuapp.com:80/rooms/';
             var roomName = 'COOL';
 
             var socket = io.connect(base + roomName);
 
             socket.on('welcome', function () {
-                // TODO: update cartoon kids with corresponding colored hair/shirt
-
                 var colorName = nameColor(userColor);
                 alert("Welcome to CO-OLCanvas! Your color is: " + colorName[1]);
             });
@@ -104,7 +103,7 @@
         <img id="frame" src="img/canvas.png" alt="Canvas Frame" width="1118" height="642" hidden="hidden">
 
         <canvas id="bkgID" width="1920" height="960" ></canvas>
-        <canvas id="canvasID" width="1118" height="642" style="border:0 solid black;"></canvas>
+        <canvas id="canvasID" width="1118" height="642"></canvas>
         <ul id="messages"></ul>
         <form action="">
             <input id="m" autocomplete="off" /><button>Send</button>
